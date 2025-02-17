@@ -1,41 +1,131 @@
-import React from 'react'
-import Sidebar from "../components/Sidebar";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid2";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import data from "../data/dummyData.json";
 
 export default function Inventory() {
+    const [selectedDeviceType, setSelectedDeviceType] = useState("");
+
+    const handleChange = (event) => {
+        setSelectedDeviceType(event.target.value);
+    };
+
+    const deviceTypes = [...new Set(data.devices.map(device => device.deviceType))];
+
+    const selectedDevices = data.devices.filter(device => selectedDeviceType === "" || device.deviceType === selectedDeviceType);
+    const selectedAnalysis = data.analysisResults.filter(result => selectedDevices.some(device => device.id === result.deviceId));
+    const selectedAlerts = data.alerts.filter(alert => selectedDevices.some(device => device.id === alert.deviceId));
+
+    const deviceHeaders = Object.keys(data.devices[0]);
+    const analysisHeaders = Object.keys(data.analysisResults[0]);
+    const alertHeaders = Object.keys(data.alerts[0]);
+
     return (
-        <Box sx={{ display: "flex" }}>
-            <Sidebar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Typography sx={{ marginBottom: 2, marginTop: 10 }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                    enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                    imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                    Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                    Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                    nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                    leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                    feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                    consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                    sapien faucibus et molestie ac.
-                </Typography>
-                <Typography sx={{ marginBottom: 2 }}>
-                    Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-                    eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-                    neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-                    tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-                    sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                    tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                    gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-                    et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-                    tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                    eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-                    posuere sollicitudin aliquam ultrices sagittis orci a.
-                </Typography>
-            </Box>
+        <Box sx={{ marginTop: 8, padding: 4 }}>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Card>
+                        <CardContent>
+                            <Typography gutterBottom variant="h6">Select a Device Type:</Typography>
+                            <FormControl sx={{ minWidth: 200 }}>
+                                <InputLabel>Device Type</InputLabel>
+                                <Select value={selectedDeviceType} onChange={handleChange} label="Device Type">
+                                    <MenuItem value="">All</MenuItem>
+                                    {deviceTypes.map(type => (
+                                        <MenuItem key={type} value={type}>{type}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">Device Inventory</Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    {deviceHeaders.map(header => (
+                                        <TableCell key={header}>{header}</TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {selectedDevices.map(device => (
+                                    <TableRow key={device.id}>
+                                        {deviceHeaders.map(header => (
+                                            <TableCell key={header}>{device[header]}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">Analysis Results</Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    {analysisHeaders.map(header => (
+                                        <TableCell key={header}>{header}</TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {selectedAnalysis.map(result => (
+                                    <TableRow key={result.id}>
+                                        {analysisHeaders.map(header => (
+                                            <TableCell key={header}>{result[header]}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">Alerts</Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    {alertHeaders.map(header => (
+                                        <TableCell key={header}>{header}</TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {selectedAlerts.map(alert => (
+                                    <TableRow key={alert.id}>
+                                        {alertHeaders.map(header => (
+                                            <TableCell key={header}>{alert[header]}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+            </Grid>
         </Box>
-    )
+    );
 }

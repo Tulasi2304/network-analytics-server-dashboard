@@ -115,7 +115,7 @@ export default function MiniDrawer() {
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={open}> {/*sx={{ backgroundColor: "" }}*/}
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -146,7 +146,7 @@ export default function MiniDrawer() {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
+                <List sx={{marginTop: 3}}>
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/">
                             <ListItemIcon>
