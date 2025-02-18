@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from '@mui/material/Typography';
 import FormControl from "@mui/material/FormControl";
@@ -10,11 +10,19 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Chart } from "react-google-charts";
 
-import data from "../data/dummyData.json";
+import data from "../data/dummyData.json"; 
+
 
 export default function Analysis() {
     const [selectedDeviceType, setSelectedDeviceType] = useState("");
 
+//     const [data, setData] = useState(null)
+// useEffect(() => {
+//     fetch("http://172.22.1.207:8081/devices")
+//       .then((res) => res.json())
+//       .then((data) => setData(data))
+//       .catch((err) => console.log(err));
+//   }, []);
     const handleChange = (event) => {
         setSelectedDeviceType(event.target.value);
     };
