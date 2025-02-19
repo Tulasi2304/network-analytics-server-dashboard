@@ -17,6 +17,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import HomeIcon from "@mui/icons-material/Home";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 
@@ -171,6 +172,15 @@ export default function MiniDrawer() {
                                 <InventoryIcon />
                             </ListItemIcon>
                             <ListItemText primary="Device Inventory" />
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem disablePadding sx={{ display: "block" }}>
+                        <ListItemButton component={Link} to="/trends-and-alerts">
+                            <ListItemIcon>
+                                <TrendingUpIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Trends and Alerts" />
                         </ListItemButton>
                     </ListItem>
                 </List>

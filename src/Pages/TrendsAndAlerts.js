@@ -19,38 +19,48 @@ import CardContent from "@mui/material/CardContent";
 
 export default function Inventory() {
 
-    const [data, setData] = useState(null);
+    const [data, setData] = useState({
+        devices: [],
+        alerts: [],
+        analysis: []
+    });
 
-    // const [data, setData] = useState({
-    //     devices: [],
-    //     metrics: [],
-    //     alerts: [],
-    //     analysisResults: []
-    // });
-
-    // useEffect(() => {
-    //     fetch("http://localhost:8080/api/data")  // Replace with your actual API endpoint
-    //         .then(response => response.json())
-    //         .then(fetchedData => {
-    //             setData({
-    //                 devices: fetchedData.devices || [],
-    //                 metrics: fetchedData.metrics || [],
-    //                 alerts: fetchedData.alerts || [],
-    //                 analysisResults: fetchedData.analysisResults || []
-    //             });
-    //         })
-    //         .catch(error => console.error("Error fetching data:", error));
-    // }, []);
-    
-    
     useEffect(() => {
-        fetch("http://localhost:8081/devices")
-          .then((res) => res.json())
-          .then((data) => setData(data))
-          .catch((err) => console.log(err));
-      }, []);
-    
-    // console.log(data);
+        fetch("http://localhost:8081/devices")  // Replace with your actual API endpoint
+            .then(response => response.json())
+            .then(fetcheddevices => {
+                setData(prevData => ({
+                    ...prevData,
+                    devices: fetcheddevices || []
+                }));
+            })
+            .catch(error => console.error("Error fetching analysis:", error));
+
+        fetch("http://localhost:8081/analysis")  // Replace with your actual API endpoint
+            .then(response => response.json())
+            .then(fetchedAnalysis => {
+                setData(prevData => ({
+                    ...prevData,
+                    analysis: fetchedAnalysis || []
+                }));
+            })
+            .catch(error => console.error("Error fetching analysis:", error));
+
+        fetch("http://localhost:8081/alerts")
+            .then(response => response.json())
+            .then(fetchedAlerts => {
+                setData(prevData => ({
+                    ...prevData,
+                    alerts: fetchedAlerts || []
+                }));
+            })
+            .catch(error => console.error("Error fetching alerts:", error));
+    }, []);
+
+    console.log(data);
+    console.log("Fetched Analysis Data:", data.analysis[1]);
+    console.log("Fetched Devices Data:", data.devices);
+
 
     const [selectedDeviceType, setSelectedDeviceType] = useState("");
 
@@ -58,19 +68,17 @@ export default function Inventory() {
         setSelectedDeviceType(event.target.value);
     };
 
-    // const deviceTypes = [...new Set(data?.devices.map(device => device.deviceType))];
-    const deviceTypes = [...new Set(data?.map(device => device.deviceType))];
+    const deviceTypes = [...new Set(data?.devices?.map(device => device.deviceType))];
 
-    const selectedDevices = data?.filter(device => selectedDeviceType === "" || device.deviceType === selectedDeviceType); // for filtering
-    // const selectedAnalysis = data?.analysisResults.filter(result => selectedDevices.some(device => device.id === result.deviceId));
-    // const selectedAlerts = data?.alerts.filter(alert => selectedDevices.some(device => device.id === alert.deviceId));
+    const selectedDevices = data?.devices?.filter(device => selectedDeviceType === "" || device.deviceType === selectedDeviceType); // for filtering
+    const selectedAnalysis = data?.analysis?.filter(result => selectedDevices.some(device => device.id === result.device.id));
+    const selectedAlerts = data?.alerts?.filter(alert => selectedDevices.some(device => device.id === alert.deviceId));
 
-    let deviceHeaders = null;
-    if(data){
-        deviceHeaders = Object.keys(data[0]);
-    }
-    // const analysisHeaders = Object.keys(data?.analysisResults[0]);
-    // const alertHeaders = Object.keys(data?.alerts[0]);
+    console.log("Selected analysis:", selectedAnalysis)
+
+    let analysisHeaders = data?.analysis?.length > 0 ? Object.keys(data.analysis[0]) : [];
+
+    let alertHeaders = data?.alerts?.length > 0 ? Object.keys(data.alerts[0]) : [];
 
     return (
         <Box sx={{ marginTop: 8, padding: 4 }}>
@@ -93,49 +101,30 @@ export default function Inventory() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Typography variant="h6">Device Inventory</Typography>
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    {deviceHeaders?.map(header => (
-                                        <TableCell key={header}>{header}</TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {selectedDevices?.map(device => (
-                                    <TableRow key={device.id}>
-                                        {deviceHeaders?.map(header => (
-                                            <TableCell key={header}>{device[header]}</TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-
-                {/* <Grid item xs={12}>
                     <Typography variant="h6">Analysis Results</Typography>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    {analysisHeaders.map(header => (
+                                    {analysisHeaders?.map(header => (
                                         <TableCell key={header}>{header}</TableCell>
                                     ))}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {selectedAnalysis.map(result => (
+                                {selectedAnalysis?.map(result => (
                                     <TableRow key={result.id}>
-                                        {analysisHeaders.map(header => (
-                                            <TableCell key={header}>{result[header]}</TableCell>
+                                        {analysisHeaders?.map(header => (
+                                            <TableCell key={header}>
+                                                {typeof result[header] === "object"
+                                                    ? result[header]?.id // Convert object to string
+                                                    : result[header]}
+                                            </TableCell>
                                         ))}
                                     </TableRow>
                                 ))}
                             </TableBody>
+
                         </Table>
                     </TableContainer>
                 </Grid>
@@ -146,23 +135,27 @@ export default function Inventory() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    {alertHeaders.map(header => (
+                                    {alertHeaders?.map(header => (
                                         <TableCell key={header}>{header}</TableCell>
                                     ))}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {selectedAlerts.map(alert => (
+                                {selectedAlerts?.map(alert => (
                                     <TableRow key={alert.id}>
-                                        {alertHeaders.map(header => (
-                                            <TableCell key={header}>{alert[header]}</TableCell>
+                                        {alertHeaders?.map(header => (
+                                            <TableCell key={header}>
+                                                {typeof alert[header] === "object"
+                                                    ? alert[header]?.id // Show device ID if it's an object
+                                                    : alert[header]}
+                                            </TableCell>
                                         ))}
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Grid> */}
+                </Grid>
             </Grid>
         </Box>
     );

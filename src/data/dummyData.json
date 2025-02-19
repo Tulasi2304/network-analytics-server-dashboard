@@ -1,22 +1,23 @@
 {
-    "devices": [
-      { "id": 1, "deviceName": "Router-1", "deviceType": "ROUTER", "ipAddress": "192.168.1.1", "location": "Data Center", "status": "ACTIVE" },
-      { "id": 2, "deviceName": "Router-2", "deviceType": "ROUTER", "ipAddress": "192.168.1.2", "location": "Branch Office", "status": "ACTIVE" },
-      { "id": 3, "deviceName": "Router-3", "deviceType": "ROUTER", "ipAddress": "192.168.1.3", "location": "HQ", "status": "INACTIVE" },
-      { "id": 4, "deviceName": "Router-4", "deviceType": "ROUTER", "ipAddress": "192.168.1.4", "location": "Remote Site", "status": "ACTIVE" },
-      { "id": 5, "deviceName": "Switch-1", "deviceType": "SWITCH", "ipAddress": "192.168.2.1", "location": "Data Center", "status": "ACTIVE" },
-      { "id": 6, "deviceName": "Switch-2", "deviceType": "SWITCH", "ipAddress": "192.168.2.2", "location": "Branch Office", "status": "ACTIVE" },
-      { "id": 7, "deviceName": "Switch-3", "deviceType": "SWITCH", "ipAddress": "192.168.2.3", "location": "HQ", "status": "INACTIVE" },
-      { "id": 8, "deviceName": "Switch-4", "deviceType": "SWITCH", "ipAddress": "192.168.2.4", "location": "Remote Site", "status": "ACTIVE" },
-      { "id": 9, "deviceName": "Firewall-1", "deviceType": "FIREWALL", "ipAddress": "192.168.3.1", "location": "Data Center", "status": "ACTIVE" },
-      { "id": 10, "deviceName": "Firewall-2", "deviceType": "FIREWALL", "ipAddress": "192.168.3.2", "location": "Branch Office", "status": "ACTIVE" },
-      { "id": 11, "deviceName": "Firewall-3", "deviceType": "FIREWALL", "ipAddress": "192.168.3.3", "location": "HQ", "status": "INACTIVE" },
-      { "id": 12, "deviceName": "Firewall-4", "deviceType": "FIREWALL", "ipAddress": "192.168.3.4", "location": "Remote Site", "status": "ACTIVE" },
-      { "id": 13, "deviceName": "Server-1", "deviceType": "SERVER", "ipAddress": "192.168.4.1", "location": "Data Center", "status": "ACTIVE" },
-      { "id": 14, "deviceName": "Server-2", "deviceType": "SERVER", "ipAddress": "192.168.4.2", "location": "Branch Office", "status": "ACTIVE" },
-      { "id": 15, "deviceName": "Server-3", "deviceType": "SERVER", "ipAddress": "192.168.4.3", "location": "HQ", "status": "INACTIVE" },
-      { "id": 16, "deviceName": "Server-4", "deviceType": "SERVER", "ipAddress": "192.168.4.4", "location": "Remote Site", "status": "ACTIVE" }
-    ],
+   "devices": [
+    { "id": 1, "deviceName": "Router-1", "deviceType": "ROUTER", "ipAddress": "192.168.1.1", "location": "Data Center", "status": "Active" },
+    { "id": 2, "deviceName": "Router-2", "deviceType": "ROUTER", "ipAddress": "192.168.1.2", "location": "Branch Office", "status": "Active" },
+    { "id": 3, "deviceName": "Router-3", "deviceType": "ROUTER", "ipAddress": "192.168.1.3", "location": "HQ", "status": "Inactive" },
+    { "id": 4, "deviceName": "Router-4", "deviceType": "ROUTER", "ipAddress": "192.168.1.4", "location": "Remote Site", "status": "Active" },
+    { "id": 5, "deviceName": "Switch-1", "deviceType": "SWITCH", "ipAddress": "192.168.2.1", "location": "Data Center", "status": "Active" },
+    { "id": 6, "deviceName": "Switch-2", "deviceType": "SWITCH", "ipAddress": "192.168.2.2", "location": "Branch Office", "status": "Active" },
+    { "id": 7, "deviceName": "Switch-3", "deviceType": "SWITCH", "ipAddress": "192.168.2.3", "location": "HQ", "status": "Inactive" },
+    { "id": 8, "deviceName": "Switch-4", "deviceType": "SWITCH", "ipAddress": "192.168.2.4", "location": "Remote Site", "status": "Active" },
+    { "id": 9, "deviceName": "Firewall-1", "deviceType": "FIREWALL", "ipAddress": "192.168.3.1", "location": "Data Center", "status": "Active" },
+    { "id": 10, "deviceName": "Firewall-2", "deviceType": "FIREWALL", "ipAddress": "192.168.3.2", "location": "Branch Office", "status": "Active" },
+    { "id": 11, "deviceName": "Firewall-3", "deviceType": "FIREWALL", "ipAddress": "192.168.3.3", "location": "HQ", "status": "Inactive" },
+    { "id": 12, "deviceName": "Firewall-4", "deviceType": "FIREWALL", "ipAddress": "192.168.3.4", "location": "Remote Site", "status": "Active" },
+    { "id": 13, "deviceName": "Server-1", "deviceType": "SERVER", "ipAddress": "192.168.4.1", "location": "Data Center", "status": "Active" },
+    { "id": 14, "deviceName": "Server-2", "deviceType": "SERVER", "ipAddress": "192.168.4.2", "location": "Branch Office", "status": "Active" },
+    { "id": 15, "deviceName": "Server-3", "deviceType": "SERVER", "ipAddress": "192.168.4.3", "location": "HQ", "status": "Inactive" },
+    { "id": 16, "deviceName": "Server-4", "deviceType": "SERVER", "ipAddress": "192.168.4.4", "location": "Remote Site", "status": "Active" }
+  ],
+
 
     "metrics": [
       { "id": 1, "deviceId": 1, "metricType": "Bandwidth", "value": 120.5, "timestamp": "2025-02-15T10:00:00" },
