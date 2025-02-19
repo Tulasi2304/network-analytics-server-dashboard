@@ -20,8 +20,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 export default function Inventory() {
     const [data, setData] = useState({ devices: [], alerts: [], analysis: [] });
-    const [selectedDeviceType, setSelectedDeviceType] = useState("");
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedDeviceAnalysis, setSelectedDeviceAnalysis] = useState("");
+    const [selectedDeviceAlerts, setSelectedDeviceAlerts] = useState("");
+    const [anchorElAnalysis, setAnchorElAnalysis] = useState(null);
+    const [anchorElAlerts, setAnchorElAlerts] = useState(null);
 
     useEffect(() => {
         fetch("http://localhost:8081/devices")
@@ -40,51 +42,48 @@ export default function Inventory() {
             .catch((err) => console.error("Error fetching alerts:", err));
     }, []);
 
-    const handleFilterClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const handleFilterClick = (event, type) => {
+        if (type === "analysis") setAnchorElAnalysis(event.currentTarget);
+        if (type === "alerts") setAnchorElAlerts(event.currentTarget);
     };
 
-    const handleFilterClose = (deviceType) => {
-        setSelectedDeviceType(deviceType);
-        setAnchorEl(null);
+    const handleFilterClose = (deviceId, type) => {
+        if (type === "analysis") {
+            setSelectedDeviceAnalysis(deviceId);
+            setAnchorElAnalysis(null);
+        } else if (type === "alerts") {
+            setSelectedDeviceAlerts(deviceId);
+            setAnchorElAlerts(null);
+        }
     };
 
-    const deviceTypes = [...new Set(data.devices.map((d) => d.deviceType))];
-    const filteredDevices = data.devices.filter(
-        (d) => !selectedDeviceType || d.deviceType === selectedDeviceType
-    );
     const filteredAnalysis = data.analysis.filter((a) =>
-        filteredDevices.some((d) => d.id === a.device.id)
+        !selectedDeviceAnalysis || a.device.id === selectedDeviceAnalysis
     );
     const filteredAlerts = data.alerts.filter((a) =>
-        filteredDevices.some((d) => d.id === a.deviceId)
+        !selectedDeviceAlerts || a.deviceId === selectedDeviceAlerts
     );
 
     const analysisHeaders = data.analysis.length > 0 ? Object.keys(data.analysis[0]) : [];
     const alertHeaders = data.alerts.length > 0 ? Object.keys(data.alerts[0]) : [];
 
     return (
-        <Box sx={{ marginTop: 8, padding: 4 }}>
+        <Box sx={{ marginTop: 8, padding: 4, width: "100%", mx: 5 }}>
             <Grid container spacing={3}>
+                {/* Analysis Results Section */}
                 <Grid item xs={12}>
-                    <Card>
-                        <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <Typography variant="h6">Trends and Alerts</Typography>
-                            <IconButton onClick={handleFilterClick}>
-                                <FilterListIcon sx={{color: "#212121"}} />
-                            </IconButton>
-                            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleFilterClose("")}>
-                                <MenuItem onClick={() => handleFilterClose("")}>All</MenuItem>
-                                {deviceTypes.map((type) => (
-                                    <MenuItem key={type} onClick={() => handleFilterClose(type)}>{type}</MenuItem>
-                                ))}
-                            </Menu>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Typography variant="h6" sx={{m: 1}}>Analysis Results</Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                        <Typography variant="h6" fontWeight="bold">Analysis Results</Typography>
+                        <IconButton onClick={(e) => handleFilterClick(e, "analysis")}> <FilterListIcon /> </IconButton>
+                        <Menu anchorEl={anchorElAnalysis} open={Boolean(anchorElAnalysis)} onClose={() => handleFilterClose("", "analysis")}>
+                            <MenuItem onClick={() => handleFilterClose("", "analysis")}>All</MenuItem>
+                            {data.devices.map((device) => (
+                                <MenuItem key={device.id} onClick={() => handleFilterClose(device.id, "analysis")}>
+                                    {device.deviceName}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableRow sx={{ backgroundColor: "#a9cff5", color: "#212121" }}>
@@ -107,8 +106,20 @@ export default function Inventory() {
                     </TableContainer>
                 </Grid>
 
+                {/* Alerts Section */}
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{m: 1}}>Alerts</Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                        <Typography variant="h6" fontWeight="bold">Alerts</Typography>
+                        <IconButton onClick={(e) => handleFilterClick(e, "alerts")}> <FilterListIcon /> </IconButton>
+                        <Menu anchorEl={anchorElAlerts} open={Boolean(anchorElAlerts)} onClose={() => handleFilterClose("", "alerts")}>
+                            <MenuItem onClick={() => handleFilterClose("", "alerts")}>All</MenuItem>
+                            {data.devices.map((device) => (
+                                <MenuItem key={device.id} onClick={() => handleFilterClose(device.id, "alerts")}>
+                                    {device.deviceName}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableRow sx={{ backgroundColor: "#a9cff5", color: "#212121" }}>
