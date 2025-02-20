@@ -80,7 +80,7 @@ export default function Inventory() {
                 <Typography variant="h5" fontWeight="bold">Device Inventory</Typography>
                 <Box>
                     {/* Filter Icon */}
-                    <IconButton onClick={handleFilterClick}>
+                    <IconButton onClick={handleFilterClick} sx={{mx: 2}}>
                         <FilterListIcon />
                     </IconButton>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleFilterClose("")}>

@@ -7,8 +7,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 export default function Metrics() {
     const [metrics, setMetrics] = useState([]);
+    const [selectedDeviceType, setSelectedDeviceType] = useState("");
     const [selectedMetricType, setSelectedMetricType] = useState("");
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [deviceAnchorEl, setDeviceAnchorEl] = useState(null);
+    const [metricAnchorEl, setMetricAnchorEl] = useState(null);
 
     // Fetch metrics from backend
     useEffect(() => {
@@ -18,21 +20,19 @@ export default function Metrics() {
             .catch((err) => console.log(err));
     }, []);
 
-    const handleFilterClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // Extract unique device types
+    const deviceTypes = [...new Set(metrics.map(metric => metric.device.deviceType))];
 
-    const handleFilterClose = (metricType) => {
-        setSelectedMetricType(metricType);
-        setAnchorEl(null);
-    };
+    // Extract unique metric types based on selected device type
+    const metricTypes = selectedDeviceType
+        ? [...new Set(metrics.filter(metric => metric.device.deviceType === selectedDeviceType).map(metric => metric.metricType))]
+        : [];
 
-    // Extract unique metric types
-    const metricTypes = [...new Set(metrics.map(metric => metric.metricType))];
-
-    // Filter metrics based on selected type
+    // Filter metrics based on selected device type and metric type
     const filteredMetrics = metrics.filter(
-        (metric) => selectedMetricType === "" || metric.metricType === selectedMetricType
+        (metric) =>
+            (selectedDeviceType === "" || metric.device.deviceType === selectedDeviceType) &&
+            (selectedMetricType === "" || metric.metricType === selectedMetricType)
     );
 
     return (
@@ -40,19 +40,40 @@ export default function Metrics() {
             {/* Top Bar */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Typography variant="h5" fontWeight="bold">Network Metrics</Typography>
-                <Box>
-                    {/* Filter Icon */}
-                    <IconButton onClick={handleFilterClick}>
-                        <FilterListIcon />
-                    </IconButton>
-                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleFilterClose("")}>
-                        <MenuItem onClick={() => handleFilterClose("")}>All</MenuItem>
-                        {metricTypes.map((type) => (
-                            <MenuItem key={type} onClick={() => handleFilterClose(type)}>
-                                {type}
-                            </MenuItem>
-                        ))}
-                    </Menu>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    {/* Device Type Filter */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mx: 5 }}>
+                        <Typography variant="body1">Filter by Device Type:</Typography>
+                        <IconButton onClick={(e) => setDeviceAnchorEl(e.currentTarget)}>
+                            <FilterListIcon />
+                        </IconButton>
+                        <Menu anchorEl={deviceAnchorEl} open={Boolean(deviceAnchorEl)} onClose={() => setDeviceAnchorEl(null)}>
+                            <MenuItem onClick={() => { setSelectedDeviceType(""); setSelectedMetricType(""); setDeviceAnchorEl(null); }}>All</MenuItem>
+                            {deviceTypes.map((type) => (
+                                <MenuItem key={type} onClick={() => { setSelectedDeviceType(type); setSelectedMetricType(""); setDeviceAnchorEl(null); }}>
+                                    {type}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                        <Typography variant="body1" fontWeight="bold">{selectedDeviceType || "All"}</Typography>
+                    </Box>
+
+                    {/* Metric Type Filter (Only enabled after selecting a device type) */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mx: 5 }}>
+                        <Typography variant="body1">Filter by Metric Type:</Typography>
+                        <IconButton onClick={(e) => selectedDeviceType && setMetricAnchorEl(e.currentTarget)} disabled={!selectedDeviceType}>
+                            <FilterListIcon />
+                        </IconButton>
+                        <Menu anchorEl={metricAnchorEl} open={Boolean(metricAnchorEl)} onClose={() => setMetricAnchorEl(null)}>
+                            <MenuItem onClick={() => { setSelectedMetricType(""); setMetricAnchorEl(null); }}>All</MenuItem>
+                            {metricTypes.map((type) => (
+                                <MenuItem key={type} onClick={() => { setSelectedMetricType(type); setMetricAnchorEl(null); }}>
+                                    {type}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                        <Typography variant="body1" fontWeight="bold">{selectedMetricType || "All"}</Typography>
+                    </Box>
                 </Box>
             </Box>
 
@@ -63,6 +84,7 @@ export default function Metrics() {
                         <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
                             <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Device ID</TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Device Type</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Metric Type</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Value</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Timestamp</TableCell>
@@ -72,9 +94,8 @@ export default function Metrics() {
                         {filteredMetrics.map((metric, index) => (
                             <TableRow key={metric.id} sx={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}>
                                 <TableCell>{metric.id}</TableCell>
-                                <TableCell>
-                                    {typeof metric.device === "object" ? metric.device?.id : metric.device}
-                                </TableCell>
+                                <TableCell>{typeof metric.device === "object" ? metric.device?.id : metric.device}</TableCell>
+                                <TableCell>{metric.device.deviceType}</TableCell>
                                 <TableCell>{metric.metricType}</TableCell>
                                 <TableCell>{metric.value}</TableCell>
                                 <TableCell>{metric.timestamp}</TableCell>
