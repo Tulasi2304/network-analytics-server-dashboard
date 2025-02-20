@@ -86,13 +86,16 @@ export default function Inventory() {
                     </Box>
                     <TableContainer component={Paper}>
                         <Table>
-                            <TableRow sx={{ backgroundColor: "#a9cff5", color: "#212121" }}>
-                                {analysisHeaders?.map((header) => (
-                                    <TableCell key={header} sx={{ color: "#212121", fontWeight: "bold" }}>
-                                        {header}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
+                                    {analysisHeaders?.map((header) => (
+                                        <TableCell key={header} sx={{fontWeight: "bold" }}>
+                                            {header}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+
                             <TableBody>
                                 {filteredAnalysis.map((result, index) => (
                                     <TableRow key={result.id} sx={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}>
@@ -122,13 +125,16 @@ export default function Inventory() {
                     </Box>
                     <TableContainer component={Paper}>
                         <Table>
-                            <TableRow sx={{ backgroundColor: "#a9cff5", color: "#212121" }}>
-                                {alertHeaders?.map((header) => (
-                                    <TableCell key={header} sx={{ color: "#212121", fontWeight: "bold" }}>
-                                        {header}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
+                                    {alertHeaders?.map((header) => (
+                                        <TableCell key={header} sx={{fontWeight: "bold" }}>
+                                            {header}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+
                             <TableBody>
                                 {filteredAlerts.map((alert, index) => (
                                     <TableRow key={alert.id} sx={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}>

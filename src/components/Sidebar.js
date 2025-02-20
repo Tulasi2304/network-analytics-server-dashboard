@@ -15,9 +15,10 @@ import ListItemText from "@mui/material/ListItemText";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import HomeIcon from "@mui/icons-material/Home";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+import BarChartIcon from '@mui/icons-material/BarChart';
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 
@@ -160,7 +161,7 @@ export default function MiniDrawer() {
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/analysis">
                             <ListItemIcon>
-                                <AssessmentIcon />
+                                <BarChartIcon />
                             </ListItemIcon>
                             <ListItemText primary="Analysis" />
                         </ListItemButton>
@@ -181,6 +182,15 @@ export default function MiniDrawer() {
                                 <TrendingUpIcon />
                             </ListItemIcon>
                             <ListItemText primary="Trends and Alerts" />
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem disablePadding sx={{ display: "block" }}>
+                        <ListItemButton component={Link} to="/metrics">
+                            <ListItemIcon>
+                                <TableChartIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Metrics" />
                         </ListItemButton>
                     </ListItem>
                 </List>

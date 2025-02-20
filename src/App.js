@@ -4,6 +4,7 @@ import Home from './Pages/Home';
 import Analysis from './Pages/Analysis';
 import Inventory from './Pages/Inventory';
 import TrendsAndAlerts from './Pages/TrendsAndAlerts'
+import Metrics from './Pages/Metrics';
 import Sidebar from "./components/Sidebar";
 import Box from "@mui/material/Box";
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/analysis" element={<Analysis />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/trends-and-alerts" element={<TrendsAndAlerts />} />
+            <Route path='/metrics' element={<Metrics />}/>
           </Routes>
         </Router>
       </Box>
