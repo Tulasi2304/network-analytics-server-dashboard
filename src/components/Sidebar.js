@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -20,6 +20,10 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import Divider from "@mui/material/Divider";
+
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+import Profile from "./Profile";
 import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -104,7 +108,9 @@ const Drawer = styled(MuiDrawer, {
 
 export default function MiniDrawer() {
     const theme = useTheme();
+
     const [open, setOpen] = React.useState(true);
+    const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -114,82 +120,82 @@ export default function MiniDrawer() {
         setOpen(false);
     };
 
+    const handleProfileClick = (event) => {
+        setProfileAnchorEl(event.currentTarget);
+    };
+
+    const handleProfileClose = () => {
+        setProfileAnchorEl(null);
+    };
+
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}> {/*sx={{ backgroundColor: "" }}*/}
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={[
-                            {
-                                marginRight: 5,
-                            },
-                            open && { display: "none" },
-                        ]}
-                    >
-                        <MenuIcon />
+            <AppBar position="fixed" open={open}>
+                <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpen}
+                            edge="start"
+                            sx={{ marginRight: 2, ...(open && { display: "none" }) }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <img src="/tejas-header.png" alt="Logo" style={{ height: "70px" }} />
+                    </Box>
+
+                    {/* Profile Icon */}
+                    <IconButton color="inherit" onClick={handleProfileClick}>
+                        <AccountCircleIcon fontSize="large" />
                     </IconButton>
-                    <img src="/tejas-header.png" alt="Logo" style={{ height: "70px" }} />
+
+                    <Profile anchorEl={profileAnchorEl} handleClose={handleProfileClose} />
                 </Toolbar>
             </AppBar>
+
+            {/* Sidebar Drawer */}
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
-                <ListItemText primary="Menu" sx={{ display: "block", p: 2}} />
+                    <ListItemText primary="Menu" sx={{ display: "block", p: 2 }} />
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === "rtl" ? (
-                            <ChevronRightIcon />
-                        ) : (
-                            <ChevronLeftIcon />
-                        )}
+                        {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List sx={{marginTop: 3}}>
+                <List sx={{ marginTop: 3 }}>
                     <ListItem disablePadding sx={{ display: "block" }}>
-                        <ListItemButton component={Link} to="/">
-                            <ListItemIcon>
-                                <HomeIcon />
-                            </ListItemIcon>
+                        <ListItemButton component={Link} to="/home">
+                            <ListItemIcon><HomeIcon /></ListItemIcon>
                             <ListItemText primary="Home" />
                         </ListItemButton>
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/analysis">
-                            <ListItemIcon>
-                                <BarChartIcon />
-                            </ListItemIcon>
+                            <ListItemIcon><BarChartIcon /></ListItemIcon>
                             <ListItemText primary="Analysis" />
                         </ListItemButton>
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/inventory">
-                            <ListItemIcon>
-                                <InventoryIcon />
-                            </ListItemIcon>
+                            <ListItemIcon><InventoryIcon /></ListItemIcon>
                             <ListItemText primary="Device Inventory" />
                         </ListItemButton>
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/trends-and-alerts">
-                            <ListItemIcon>
-                                <TrendingUpIcon />
-                            </ListItemIcon>
+                            <ListItemIcon><TrendingUpIcon /></ListItemIcon>
                             <ListItemText primary="Trends and Alerts" />
                         </ListItemButton>
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/metrics">
-                            <ListItemIcon>
-                                <TableChartIcon />
-                            </ListItemIcon>
+                            <ListItemIcon><TableChartIcon /></ListItemIcon>
                             <ListItemText primary="Metrics" />
                         </ListItemButton>
                     </ListItem>
