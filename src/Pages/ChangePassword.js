@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Container,
-    Card,
-    CardContent,
-    Alert,
-} from "@mui/material";
+import {Box, TextField, Button, Typography, Container, Card, CardContent, Alert,} from "@mui/material";
 
 export default function ChangePassword() {
     const [oldPassword, setOldPassword] = useState("");
@@ -59,8 +50,8 @@ export default function ChangePassword() {
 
     return (
         <Container maxWidth="sm">
-            <Box sx={{ mt: 8 }}>
-                <Card elevation={3}>
+            <Box sx={{ mt: 8, display: "flex", justifyContent: "center" }}>
+                <Card elevation={3} sx={{ borderRadius: 4, p: 3, width: "100%", maxWidth: 400 }}>
                     <CardContent>
                         <Typography variant="h5" gutterBottom>
                             Change Password
@@ -70,41 +61,11 @@ export default function ChangePassword() {
                         {success && <Alert severity="success">{success}</Alert>}
 
                         <form onSubmit={handleSubmit}>
-                            <TextField
-                                fullWidth
-                                label="Old Password"
-                                type="password"
-                                margin="normal"
-                                value={oldPassword}
-                                onChange={(e) => setOldPassword(e.target.value)}
-                                required
-                            />
-                            <TextField
-                                fullWidth
-                                label="New Password"
-                                type="password"
-                                margin="normal"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                required
-                            />
-                            <TextField
-                                fullWidth
-                                label="Confirm New Password"
-                                type="password"
-                                margin="normal"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                            />
+                            <TextField fullWidth label="Old Password" type="password" margin="normal" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required/>
+                            <TextField fullWidth label="New Password" type="password" margin="normal" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required/>
+                            <TextField fullWidth label="Confirm New Password" type="password" margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/>
 
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                sx={{ mt: 2 }}
-                            >
+                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                                 Change Password
                             </Button>
                         </form>

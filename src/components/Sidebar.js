@@ -134,13 +134,7 @@ export default function MiniDrawer() {
             <AppBar position="fixed" open={open}>
                 <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={handleDrawerOpen}
-                            edge="start"
-                            sx={{ marginRight: 2, ...(open && { display: "none" }) }}
-                        >
+                        <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 2, ...(open && { display: "none" }) }}>
                             <MenuIcon />
                         </IconButton>
                         <img src="/tejas-header.png" alt="Logo" style={{ height: "70px" }} />

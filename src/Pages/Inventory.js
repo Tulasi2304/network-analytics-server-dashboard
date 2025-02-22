@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper, Grid, IconButton, Dialog, DialogActions, DialogContent, DialogTitle,
-    Button, TextField, Select, Menu, MenuItem, FormControl, InputLabel, Tooltip
+    Paper, Grid, IconButton, Button, Menu, MenuItem, Tooltip
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import AddDeviceForm from "../components/AddDeviceForm";
+import DeleteConfirmation from "../components/DeleteConfirmation";
+import EditDeviceForm from "../components/EditDeviceForm";
 
 export default function Inventory() {
     const [devices, setDevices] = useState([]);
@@ -19,14 +22,6 @@ export default function Inventory() {
     const [selectedDevice, setSelectedDevice] = useState(null);
 
     const [anchorEl, setAnchorEl] = useState(null);
-    
-    const [newDevice, setNewDevice] = useState({
-        deviceName: "",
-        deviceType: "",
-        ipAddress: "",
-        location: "",
-        status: "Active",
-    });
 
     // Fetch devices from backend
     useEffect(() => {
@@ -36,18 +31,34 @@ export default function Inventory() {
             .catch((err) => console.log(err));
     }, []);
 
+    //For adding device
+    const handleOpenAdd = () => setOpenAdd(true);
+
+    const handleCloseAdd = () => setOpenAdd(false);
+
+    const handleDeviceUpdate = (addedDevice) => {
+        setDevices([...devices, addedDevice]);
+    };
+
+    //For editing device
     const handleOpenEdit = (device) => {
         setSelectedDevice(device);
         setOpenEdit(true);
     };
     const handleCloseEdit = () => setOpenEdit(false);
 
+    const handleDeviceEdit = (device) => {
+        setDevices(devices.map(d => d.id === device.id ? device : d));
+    }
+
+    //For deleting device
     const handleOpenDelete = (device) => {
         setSelectedDevice(device);
         setOpenDelete(true);
     };
     const handleCloseDelete = () => setOpenDelete(false);
 
+    //For filtering devices
     const handleFilterClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -65,66 +76,14 @@ export default function Inventory() {
         (device) => selectedDeviceType === "" || device.deviceType === selectedDeviceType
     );
 
-    // Handle opening and closing the add device modal
-    const handleOpen = () => setOpenAdd(true);
-    const handleClose = () => setOpenAdd(false);
-
-    // Handle input change in form
-    const handleOpenChange = (e) => {
-        setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
-    };
-
-    const handleEditChange = (e) => {
-        setSelectedDevice({ ...selectedDevice, [e.target.name]: e.target.value });
-    };
-
-    // Handle form submission (POST request)
-    const handleSubmit = async () => {
-        try {
-            const response = await fetch("http://localhost:8081/devices", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newDevice),
-            });
-
-            if (!response.ok) throw new Error("Failed to add device");
-
-            const addedDevice = await response.json();
-            setDevices([...devices, addedDevice]); // Update UI
-            handleClose(); // Close modal
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
-    const handleUpdate = async () => {
-        const response = await fetch(`http://localhost:8081/devices/${selectedDevice.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(selectedDevice),
-        });
-        if (response.ok) {
-            setDevices(devices.map(d => d.id === selectedDevice.id ? selectedDevice : d));
-            handleCloseEdit();
-        }
-    };
-
-    const handleDelete = async () => {
-        const response = await fetch(`http://localhost:8081/devices/${selectedDevice.id}`, {
-            method: "DELETE",
-        });
-        if (response.ok) {
-            setDevices(devices.filter(d => d.id !== selectedDevice.id));
-            handleCloseDelete();
-        }
-    };
-
     return (
         <Box sx={{ marginTop: 8, padding: 4, mx: "auto", width: "80%" }}>
+
             {/* Top Bar */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Typography variant="h5" fontWeight="bold">Device Inventory</Typography>
                 <Box>
+
                     {/* Filter Icon */}
                     <IconButton onClick={handleFilterClick} sx={{ mx: 2 }}>
                         <FilterListIcon />
@@ -137,8 +96,9 @@ export default function Inventory() {
                             </MenuItem>
                         ))}
                     </Menu>
+
                     {/* Add Device Button */}
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpen}>
+                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
                         Add Device
                     </Button>
                 </Box>
@@ -185,68 +145,12 @@ export default function Inventory() {
                 </Table>
             </TableContainer>
 
-            {/* Add Device Modal */}
-            <Dialog open={openAdd} onClose={handleClose}>
-                <DialogTitle>Add New Device</DialogTitle>
-                <DialogContent>
-                    <TextField label="Device Name" name="deviceName" fullWidth margin="dense" onChange={handleOpenChange} />
-                    <FormControl fullWidth margin="dense">
-                        <InputLabel>Device Type</InputLabel>
-                        <Select name="deviceType" value={newDevice.deviceType} onChange={handleOpenChange} label="Device Type">
-                            <MenuItem value="ROUTER">Router</MenuItem>
-                            <MenuItem value="SWITCH">Switch</MenuItem>
-                            <MenuItem value="FIREWALL">Firewall</MenuItem>
-                            <MenuItem value="SERVER">Server</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <TextField label="IP Address" name="ipAddress" fullWidth margin="dense" onChange={handleOpenChange} />
-                    <TextField label="Location" name="location" fullWidth margin="dense" onChange={handleOpenChange} />
-                    <FormControl fullWidth margin="dense">
-                        <InputLabel>Status</InputLabel>
-                        <Select name="status" value={newDevice.status} onChange={handleOpenChange} label="Status">
-                            <MenuItem value="Active">Active</MenuItem>
-                            <MenuItem value="Inactive">Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-                </DialogActions>
-            </Dialog>
+            <AddDeviceForm open={openAdd} handleCloseAdd={handleCloseAdd} onAddDevice={handleDeviceUpdate} />
 
-            {/* Edit Device Modal */}
-            <Dialog open={openEdit} onClose={handleCloseEdit}>
-                <DialogTitle>Edit Device</DialogTitle>
-                <DialogContent>
-                    <TextField label="Device Name" name="deviceName" fullWidth margin="dense" value={selectedDevice?.deviceName || ""} onChange={handleEditChange} />
-                    <TextField label="IP Address" name="ipAddress" fullWidth margin="dense" value={selectedDevice?.ipAddress || ""} onChange={handleEditChange} />
-                    <TextField label="Location" name="location" fullWidth margin="dense" value={selectedDevice?.location || ""} onChange={handleEditChange} />
-                    <FormControl fullWidth margin="dense">
-                        <InputLabel>Status</InputLabel>
-                        <Select name="status" value={selectedDevice?.status || ""} onChange={handleEditChange} label="Status">
-                            <MenuItem value="Active">Active</MenuItem>
-                            <MenuItem value="Inactive">Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEdit}>Cancel</Button>
-                    <Button variant="contained" onClick={handleUpdate}>Update</Button>
-                </DialogActions>
-            </Dialog>
+            <EditDeviceForm openEdit={openEdit} handleCloseEdit={handleCloseEdit} selectedDevice={selectedDevice} setSelectedDevice={setSelectedDevice} onEditDevice={handleDeviceEdit} />
 
-            {/* Delete Confirmation Modal */}
-            <Dialog open={openDelete} onClose={handleCloseDelete}>
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                    <Typography>Are you sure you want to delete <strong>{selectedDevice?.deviceName}</strong>?</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDelete}>Cancel</Button>
-                    <Button variant="contained" color="error" onClick={handleDelete}>Delete</Button>
-                </DialogActions>
-            </Dialog>
+            <DeleteConfirmation openDelete={openDelete} handleCloseDelete={handleCloseDelete} selectedDevice={selectedDevice} setDevices={setDevices} />
+
         </Box>
     );
 }
