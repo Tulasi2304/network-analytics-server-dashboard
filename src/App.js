@@ -7,6 +7,7 @@ import Inventory from './Pages/Inventory';
 import TrendsAndAlerts from './Pages/TrendsAndAlerts'
 import Metrics from './Pages/Metrics';
 import ChangePassword from './Pages/ChangePassword'
+import Users from './Pages/Users';
 import Sidebar from "./components/Sidebar";
 import Box from "@mui/material/Box";
 import AddUser from './Pages/AddUser';
@@ -17,9 +18,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/add-user' element={<AddUser />} />
         <Route path='/change-password' element={<ChangePassword />} />
         <Route path="/*" element={<LayoutWithSidebar />} />
+        <Route path='/add-user' element={<AddUser />} />
       </Routes>
     </Router>
   );
@@ -35,6 +36,7 @@ function LayoutWithSidebar() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/trends-and-alerts" element={<TrendsAndAlerts />} />
         <Route path='/metrics' element={<Metrics />} />
+        <Route path="/users" element={<Users />} />
       </Routes>
     </Box>
   );

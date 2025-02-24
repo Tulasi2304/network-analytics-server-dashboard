@@ -20,6 +20,8 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import Divider from "@mui/material/Divider";
+import GroupIcon from '@mui/icons-material/Group';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
@@ -191,6 +193,20 @@ export default function MiniDrawer() {
                         <ListItemButton component={Link} to="/metrics">
                             <ListItemIcon><TableChartIcon /></ListItemIcon>
                             <ListItemText primary="Metrics" />
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem disablePadding sx={{ display: "block" }}>
+                        <ListItemButton component={Link} to="/users">
+                            <ListItemIcon><GroupIcon /></ListItemIcon>
+                            <ListItemText primary="Users" />
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem disablePadding sx={{ display: "block" }}>
+                        <ListItemButton component={Link} to="/add-user">
+                            <ListItemIcon><GroupAddIcon /></ListItemIcon>
+                            <ListItemText primary="Add users" />
                         </ListItemButton>
                     </ListItem>
                 </List>
