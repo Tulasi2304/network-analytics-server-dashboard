@@ -30,8 +30,8 @@ export default function ChangePassword() {
         }
 
         // Send request to backend
-        fetch("http://localhost:8081/admin/updatepassword", {
-            method: "POST",
+        fetch("http://localhost:8081/auth/updatepassword", {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
