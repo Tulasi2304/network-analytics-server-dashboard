@@ -39,7 +39,10 @@ export default function Alerts() {
         setAnchorEl(null);
     };
 
-    const filteredAlerts = alerts.filter(a => !selectedDevice || a.deviceId === selectedDevice);
+    const filteredAlerts = alerts.filter(a => 
+        selectedDevice === "" || String(a.device?.id || a.deviceId) === String(selectedDevice)
+    );
+    
     const alertHeaders = alerts.length > 0 ? Object.keys(alerts[0]) : [];
 
     return (

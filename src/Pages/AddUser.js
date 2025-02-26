@@ -51,7 +51,7 @@ export default function AddUser() {
             // console.log(response)
             const result = await response.json();
             console.log("User Registered: ", result);
-            navigate("/login");
+            navigate("/home");
         } catch (error) {
             console.error("Error registering user:", error);
         }

@@ -38,8 +38,11 @@ export default function UsersTable() {
         setAnchorEl(null);
     };
 
-    const roles = [...new Set(users.map(user => user.role))];
-    const filteredUsers = users.filter(user => selectedRole === "" || user.role === selectedRole);
+    const roles = [...new Set(users.flatMap(user => user.roles.map(role => role.name)))];
+    const filteredUsers = users.filter(user => 
+        selectedRole === "" || user.roles.some(role => role.name === selectedRole)
+    );
+    
 
     return (
         <Box sx={{ marginTop: 8, padding: 4, mx: "auto", width: "80%" }}>
