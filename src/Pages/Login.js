@@ -25,7 +25,6 @@ export default function Login() {
             });
 
             const data = await response.json();
-            console.log("Login Response:", data); // 🔍 Debugging response
 
             if (!response.ok) {
                 throw new Error(data.error || "Invalid credentials");
@@ -35,12 +34,12 @@ export default function Login() {
                 throw new Error("Token not received from server");
             }
 
-            // ✅ Store user details (including token) in context
+            // Store user details (including token) in context
             setUser({ username: data.username, email: data.email, roles: data.roles, token: data.token });
 
             console.log("User logged in successfully:", data);
 
-            // ✅ Navigate to home page
+            // Navigate to home page
             navigate("/home");
         } catch (err) {
             setError(err.message);

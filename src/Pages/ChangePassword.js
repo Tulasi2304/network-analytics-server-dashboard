@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {Box, TextField, Button, Typography, Container, Card, CardContent, Alert,} from "@mui/material";
 import { useAuth } from "../context/UserContext";
 
@@ -8,6 +9,7 @@ export default function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const navigate = useNavigate();
 
     const {user} = useAuth();
     const username = user.username;
@@ -18,12 +20,12 @@ export default function ChangePassword() {
         e.preventDefault();
         setError("");
         setSuccess("");
-
+    
         if (!oldPassword || !newPassword || !confirmPassword) {
             setError("All fields are required.");
             return;
         }
-
+    
         if (newPassword !== confirmPassword) {
             setError("New password and confirm password do not match.");
             return;
@@ -36,28 +38,35 @@ export default function ChangePassword() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({
-                username,
-                newPassword,
-            }),
+            body: JSON.stringify({ username, newPassword }),
         })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.success) {
-                    setSuccess("Password changed successfully!");
-                    setOldPassword("");
-                    setNewPassword("");
-                    setConfirmPassword("");
-                } else {
-                    setError(data.message || "Error changing password.");
-                }
-            })
-            .catch(() => setError("Server error. Please try again later."));
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                setSuccess("Password changed successfully!");
+                
+                // setTimeout(() => {
+                //     navigate("/home");
+                // }, 1500);
+                
+                setOldPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+                navigate("/home");
+            } else {
+                setError(data.message || "Error changing password.");
+            }
+            setTimeout(() => {
+                navigate("/home");
+            }, 1500);
+        })
+        .catch(() => setError("Server error. Please try again later."));
     };
+    
 
     return (
         <Container maxWidth="sm">
-            <Box sx={{ mt: 8, display: "flex", justifyContent: "center" }}>
+            <Box sx={{ mt: 15, display: "flex", justifyContent: "center" }}>
                 <Card elevation={3} sx={{ borderRadius: 4, p: 3, width: "100%", maxWidth: 400 }}>
                     <CardContent>
                         <Typography variant="h5" gutterBottom>

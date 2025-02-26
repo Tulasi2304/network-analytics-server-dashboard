@@ -4,7 +4,7 @@ import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import DevicesIcon from "@mui/icons-material/Devices";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import Cookies from "js-cookie";
+
 import { useAuth } from "../context/UserContext";
 export default function Home() {
   const {user} = useAuth();
@@ -89,7 +89,7 @@ export default function Home() {
       {/* Quick Stats Section */}
       <Grid container spacing={3} my={2}>
         {/* Total Devices */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ textAlign: "center", p: 2 }}>
             <CardContent>
               <DevicesIcon color="primary" fontSize="large" />
@@ -100,7 +100,7 @@ export default function Home() {
         </Grid>
 
         {/* Active Devices */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ textAlign: "center", p: 2 }}>
             <CardContent>
               <NetworkCheckIcon color="success" fontSize="large" />
@@ -111,7 +111,7 @@ export default function Home() {
         </Grid>
 
         {/* Alerts */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ textAlign: "center", p: 2 }}>
             <CardContent>
               <NotificationsActiveIcon color="error" fontSize="large" />
@@ -122,7 +122,7 @@ export default function Home() {
         </Grid>
 
         {/*Analysis reports*/}
-        <Grid item xs={12} sm={6} md={3}>
+        {/* <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ textAlign: "center", p: 2 }}>
             <CardContent>
               <BarChartIcon color="primary" fontSize="large" />
@@ -130,39 +130,10 @@ export default function Home() {
               <Typography variant="body2">New Analysis Reports</Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid> */}
 
       </Grid>
 
-
-      {/* Quick Navigation Buttons */}
-      {/* <Box sx={{ mt: 4, textAlign: "center" }}>
-        <Typography variant="h6" gutterBottom>
-          Explore Key Features
-        </Typography>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item>
-            <Button variant="contained" color="primary" component={Link} to="/analysis">
-              <BarChartIcon sx={{ mr: 1 }} /> View Analysis
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="secondary" component={Link} to="/inventory">
-              <DevicesIcon sx={{ mr: 1 }} /> Device Inventory
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="error" component={Link} to="/trends-and-alerts">
-              <NotificationsActiveIcon sx={{ mr: 1 }} /> View Alerts
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="info" component={Link} to="/metrics">
-              <LiveHelpIcon sx={{ mr: 1 }} /> Network Metrics
-            </Button>
-          </Grid>
-        </Grid>
-      </Box> */}
     </Box>
   );
 }

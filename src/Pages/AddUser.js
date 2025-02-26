@@ -62,9 +62,7 @@ export default function AddUser({ onAddUser }) { // Accept onAddUser as a prop
 
             const result = await response.json();
             console.log("User Registered: ", result);
-
-            if (onAddUser) onAddUser(result); // Update UI with new user
-            navigate("/login");
+            navigate("/home");
         } catch (error) {
             console.error("Error registering user:", error);
         }
