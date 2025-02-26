@@ -21,9 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ProtectedRoute />} />
           <Route path="/login" element={<Login />} />
-          <Route path='/change-password' element={<ChangePassword />} />
           <Route path="/*" element={<LayoutWithSidebar />} />
-          <Route path='/add-user' element={<AddUser />} />
         </Routes>
       </Router>
     </UserProvider>
@@ -49,6 +47,8 @@ function LayoutWithSidebar() {
         <Route path="/alerts" element={<Alerts />} />
         <Route path='/metrics' element={<Metrics />} />
         <Route path="/users" element={<Users />} />
+        <Route path='/change-password' element={<ChangePassword />} />
+        <Route path='/add-user' element={<AddUser />} />
       </Routes>
     </Box>
   );

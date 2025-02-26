@@ -31,6 +31,8 @@ import { useAuth } from "../context/UserContext";
 
 import { Link } from "react-router-dom";
 
+import { useNavigate } from "react-router-dom";
+
 // const role = localStorage.getItem("role");
 
 const drawerWidth = 240;
@@ -119,6 +121,8 @@ export default function MiniDrawer() {
     const [open, setOpen] = React.useState(true);
     const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
+    const navigate = useNavigate();
+
     if (!user) return null;
 
     const handleDrawerOpen = () => {
@@ -146,7 +150,10 @@ export default function MiniDrawer() {
                         <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ marginRight: 2, ...(open && { display: "none" }) }}>
                             <MenuIcon />
                         </IconButton>
-                        <img src="/tejas-header.png" alt="Logo" style={{ height: "70px" }} />
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <img src="/tejas-header.png" alt="Logo" style={{ height: "70px", cursor: "pointer", position: "relative", zIndex: 999 }} onClick={() => navigate("/home")}/>
+                        </div>
+
                     </Box>
 
                     {/* Profile Icon */}

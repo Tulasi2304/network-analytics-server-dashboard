@@ -58,14 +58,11 @@ export default function AddUser() {
     };
     
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", backgroundColor: "#f4f6f8", mx: "auto" }}>
-            <img src="/tejas-header.png" alt="Logo" style={{ width: "200px", marginBottom: "10px" }} />
-            
-            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>Create an Account</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", backgroundColor: "#f4f6f8", mx: "auto", mt: 5 }}>
             
             <Paper elevation={3} sx={{ padding: 4, borderRadius: 3, width: "350px", textAlign: "center" }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>Register</Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>Fill in the details to create your account</Typography>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>Create an account</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>Fill in the details to create an account</Typography>
                 
                 <TextField label="Username" name="username" variant="outlined" fullWidth sx={{ mb: 2 }} onChange={handleChange} />
                 <TextField label="Email" name="email" variant="outlined" fullWidth sx={{ mb: 2 }} onChange={handleChange} />

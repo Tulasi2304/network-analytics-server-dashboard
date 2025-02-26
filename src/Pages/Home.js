@@ -6,8 +6,11 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import BarChartIcon from "@mui/icons-material/BarChart";
 
 import { useAuth } from "../context/UserContext";
+
 export default function Home() {
   const {user} = useAuth();
+  const token = user.token;
+
   const [stats, setStats] = useState({
     totalDevices: 0,
     activeDevices: 0,
@@ -15,7 +18,6 @@ export default function Home() {
     analysisResults: 0
   });
 
-  const token = user.token;
   useEffect(() => {
     // console.log("Token being sent:", token);
 
