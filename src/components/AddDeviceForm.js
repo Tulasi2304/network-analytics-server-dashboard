@@ -10,19 +10,32 @@ export default function AddDeviceForm({ open, handleCloseAdd, onAddDevice }) {
 
     const handleOpenChange = (e) => setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
 
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
-            if (json.length > 0) setNewDevice(json[0]);
-        };
-        reader.readAsArrayBuffer(file);
+    
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        try {
+            const response = await fetch("http://localhost:8081/devices/admin/uploadExcel", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}` // Only include authorization, no need for "Content-Type" in FormData
+                },
+                body: formData
+            });
+    
+            if (!response.ok) throw new Error("Failed to upload file");
+            
+            const uploadedDevices = await response.json();
+            uploadedDevices.forEach(device => onAddDevice(device)); // Assuming backend returns an array of added devices
+            handleCloseAdd();
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
     };
+    
 
     const handleSubmit = async () => {
         try {

@@ -1,62 +1,75 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Paper, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import * as XLSX from "xlsx";
+import { useAuth } from "../context/UserContext";
 
-export default function AddUser() {
+export default function AddUser({ onAddUser }) { // Accept onAddUser as a prop
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ username: "", email: "", password: "", confirmPassword: "", role: "" });
+    const { user } = useAuth();
+    const token = user?.token;
     
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-    
+    const [formData, setFormData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        role: ""
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-    
-        const formData = new FormData();
-        formData.append("file", file);
-    
+
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+
         try {
-            const response = await fetch("http://localhost:8081/users/upload", {
+            const response = await fetch("http://localhost:8081/admin/upload-users", {
                 method: "POST",
-                body: formData
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                body: uploadFormData
             });
-    
-            if (!response.ok) {
-                throw new Error("Failed to upload file");
+
+            if (!response.ok) throw new Error("Failed to upload file");
+
+            const uploadedUsers = await response.json();
+            if (onAddUser) {
+                uploadedUsers.forEach(user => onAddUser(user)); // Update UI with new users
             }
-    
-            const result = await response.json();
-            console.log("File uploaded successfully: ", result);
-            alert("File uploaded successfully!");
-    
+            alert("Users uploaded successfully!");
         } catch (error) {
             console.error("Error uploading file:", error);
         }
     };
-    
-    
+
     const handleRegister = async () => {
         try {
-            const response = await fetch("http://localhost:8081/auth/register", {
+            const response = await fetch("http://localhost:8081/admin/adduser", {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(formData)
             });
-            if (!response.ok) {
-                throw new Error("Failed to register user");
-            }
-            // console.log(response)
+
+            if (!response.ok) throw new Error("Failed to register user");
+
             const result = await response.json();
             console.log("User Registered: ", result);
+
+            if (onAddUser) onAddUser(result); // Update UI with new user
             navigate("/login");
         } catch (error) {
             console.error("Error registering user:", error);
         }
     };
-    
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", backgroundColor: "#f4f6f8", mx: "auto" }}>
             <img src="/tejas-header.png" alt="Logo" style={{ width: "200px", marginBottom: "10px" }} />
