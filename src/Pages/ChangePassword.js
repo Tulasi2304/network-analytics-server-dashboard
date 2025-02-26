@@ -30,7 +30,8 @@ export default function ChangePassword() {
             setError("New password and confirm password do not match.");
             return;
         }
-    
+
+        // Send request to backend
         fetch("http://localhost:8081/auth/updatepassword", {
             method: "PUT",
             headers: {
