@@ -3,21 +3,31 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import FilterListIcon from "@mui/icons-material/FilterList";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import data from "../data/dummyData.json"; 
+import { useAuth } from "../context/UserContext";
 
 export default function UsersTable() {
-    // const [users, setUsers] = useState([]);
-    const users = data.users;
+    const [users, setUsers] = useState([]);
+    // const users = data.users;
     const [selectedRole, setSelectedRole] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
 
-    // useEffect(() => {
-    //     fetch("http://localhost:8081/users")
-    //         .then((res) => res.json())
-    //         .then((data) => setUsers(data))
-    //         .catch((err) => console.log(err));
-    // }, [u]);
+    const { user } = useAuth();
+    const token = user.token;
+
+    useEffect(() => {
+        fetch("http://localhost:8081/admin/allusers", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Include token if authentication is required
+                "Content-Type": "application/json"
+            }
+        })
+        .then((res) => res.json())
+        .then((data) => setUsers(data))
+        .catch((err) => console.log(err));
+    }, []);
+    
+    console.log(users);
 
     const handleFilterClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -62,9 +72,9 @@ export default function UsersTable() {
                         {filteredUsers.map((user, index) => (
                             <TableRow key={user.id} sx={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}>
                                 <TableCell>{user.id}</TableCell>
-                                <TableCell>{user.name}</TableCell>
+                                <TableCell>{user.username}</TableCell>
                                 <TableCell>{user.email}</TableCell>
-                                <TableCell>{user.role}</TableCell>
+                                <TableCell>{user.roles.map(role => role.name).join(", ")}</TableCell>
                                 {/* <TableCell align="center">
                                     <Tooltip title="Edit">
                                         <IconButton>

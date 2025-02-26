@@ -119,6 +119,8 @@ export default function MiniDrawer() {
     const [open, setOpen] = React.useState(true);
     const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
+    if (!user) return null;
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -187,7 +189,7 @@ export default function MiniDrawer() {
                         </ListItemButton>
                     </ListItem>
 
-                    {user?.role !== "VIEWER" &&
+                    {user?.roles[0] !== "VIEWER" &&
                         <ListItem disablePadding sx={{ display: "block" }}>
                             <ListItemButton component={Link} to="/analysis">
                                 <ListItemIcon><BarChartIcon /></ListItemIcon>
@@ -196,7 +198,7 @@ export default function MiniDrawer() {
                         </ListItem>
                     }
 
-                    {user?.role !== "VIEWER" &&
+                    {user?.roles[0] !== "VIEWER" &&
                         <ListItem disablePadding sx={{ display: "block" }}>
                             <ListItemButton component={Link} to="/trends">
                                 <ListItemIcon><TrendingUpIcon /></ListItemIcon>
@@ -212,7 +214,7 @@ export default function MiniDrawer() {
                         </ListItemButton>
                     </ListItem>
 
-                    {user?.role === "ADMIN" &&
+                    {user?.roles[0] === "ADMIN" &&
                         <ListItem disablePadding sx={{ display: "block" }}>
                             <ListItemButton component={Link} to="/users">
                                 <ListItemIcon><GroupIcon /></ListItemIcon>
@@ -221,7 +223,7 @@ export default function MiniDrawer() {
                         </ListItem>
                     }
 
-                    {user?.role === "ADMIN" &&
+                    {user?.roles[0] === "ADMIN" &&
                         <ListItem disablePadding sx={{ display: "block" }}>
                             <ListItemButton component={Link} to="/add-user">
                                 <ListItemIcon><GroupAddIcon /></ListItemIcon>

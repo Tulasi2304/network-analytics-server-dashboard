@@ -8,6 +8,8 @@ export default function Profile({ anchorEl, handleClose }) {
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
     const { user, logout } = useAuth(); // Get user from context
+    console.log("User Data:", user);
+
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to log out?")) {
@@ -36,7 +38,7 @@ export default function Profile({ anchorEl, handleClose }) {
                 {user ? (
                     <>
                         <Typography variant="body1" sx={{ mt: 1 }}><strong>User Name:</strong> {user.username}</Typography>
-                        <Typography variant="body1" sx={{ mt: 1 }}><strong>Role:</strong> {user.role}</Typography>
+                        <Typography variant="body1" sx={{ mt: 1 }}><strong>Role:</strong> {user.roles[0]}</Typography>
                         <Typography variant="body1" sx={{ mt: 1 }}><strong>Email:</strong> {user.email}</Typography>
 
                         <Button variant="outlined" color="primary" fullWidth sx={{ mt: 2 }} onClick={handleChangePassword}>

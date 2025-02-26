@@ -4,6 +4,7 @@ import {
     Paper, IconButton, Menu, MenuItem
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { useAuth } from "../context/UserContext";
 
 export default function Metrics() {
     const [metrics, setMetrics] = useState([]);
@@ -12,13 +13,16 @@ export default function Metrics() {
     const [deviceAnchorEl, setDeviceAnchorEl] = useState(null);
     const [metricAnchorEl, setMetricAnchorEl] = useState(null);
 
+    const {user} = useAuth();
+    const token = user.token;
+
     // Fetch metrics from backend
     useEffect(() => {
         fetch("http://localhost:8081/metrics/viewer", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}` // Adjust token storage method
+              "Authorization": `Bearer ${token}` // Adjust token storage method
             }
           })
             .then((res) => res.json())

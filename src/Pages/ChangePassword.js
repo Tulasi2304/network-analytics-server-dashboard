@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {Box, TextField, Button, Typography, Container, Card, CardContent, Alert,} from "@mui/material";
+import { useAuth } from "../context/UserContext";
 
 export default function ChangePassword() {
     const [oldPassword, setOldPassword] = useState("");
@@ -7,6 +8,11 @@ export default function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    const {user} = useAuth();
+    const username = user.username;
+    
+    const token = user.token;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -24,13 +30,14 @@ export default function ChangePassword() {
         }
 
         // Send request to backend
-        fetch("http://localhost:8081/auth/change-password", {
+        fetch("http://localhost:8081/admin/updatepassword", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
-                oldPassword,
+                username,
                 newPassword,
             }),
         })

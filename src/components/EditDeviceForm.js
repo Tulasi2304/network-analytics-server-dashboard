@@ -3,13 +3,19 @@ import {
     Dialog, DialogActions, DialogContent, DialogTitle,
     Button, TextField, Select, Menu, MenuItem, FormControl, InputLabel,
 } from "@mui/material";
+import { useAuth } from "../context/UserContext";
 
 export default function EditDeviceForm({openEdit, handleCloseEdit, selectedDevice, setSelectedDevice, onEditDevice}) {
+    const {user} = useAuth();
+    const token = user.token;
 
     const handleUpdate = async () => {
-        const response = await fetch(`http://localhost:8081/devices/${selectedDevice.id}`, {
+        const response = await fetch(`http://localhost:8081/devices/admin/${selectedDevice.id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Authorization": `Bearer ${token}`, // Send token in Authorization header
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(selectedDevice),
         });
         if (response.ok) {

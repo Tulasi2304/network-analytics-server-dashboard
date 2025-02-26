@@ -36,7 +36,7 @@ export default function Login() {
             }
 
             // ✅ Store user details (including token) in context
-            setUser({ username: data.username, email: data.email, role: data.role, token: data.token });
+            setUser({ username: data.username, email: data.email, roles: data.roles, token: data.token });
 
             console.log("User logged in successfully:", data);
 

@@ -11,6 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddDeviceForm from "../components/AddDeviceForm";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import EditDeviceForm from "../components/EditDeviceForm";
+import { useAuth } from "../context/UserContext";
 
 export default function Inventory() {
     const [devices, setDevices] = useState([]);
@@ -23,11 +24,12 @@ export default function Inventory() {
 
     const [anchorEl, setAnchorEl] = useState(null);
 
-    const role = localStorage.getItem("role");
+    const {user} = useAuth();
+    const role = user.roles[0];
 
     // Fetch devices from backend
     useEffect(() => {
-        const token = localStorage.getItem("token"); // Retrieve token from local storage
+        const token = user.token; // Retrieve token from local storage
 
         fetch("http://localhost:8081/devices/viewer", {
             method: "GET",

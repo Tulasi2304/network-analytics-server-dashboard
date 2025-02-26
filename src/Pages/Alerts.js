@@ -4,6 +4,7 @@ import {
     TableHead, TableRow, Paper, IconButton, Menu, MenuItem
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { useAuth } from "../context/UserContext";
 
 export default function Alerts() {
     const [devices, setDevices] = useState([]);
@@ -11,10 +12,13 @@ export default function Alerts() {
     const [selectedDevice, setSelectedDevice] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
 
+    const {user} = useAuth();
+    const token = user.token;
+
     useEffect(() => {
         fetch("http://localhost:8081/devices/viewer", {
             method: "GET",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })
         .then(res => res.json())
         .then(setDevices)
@@ -22,7 +26,7 @@ export default function Alerts() {
 
         fetch("http://localhost:8081/alerts/viewer", {
             method: "GET",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })
         .then(res => res.json())
         .then(setAlerts)

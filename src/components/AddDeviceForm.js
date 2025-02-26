@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, FormControl, InputLabel, Typography } from "@mui/material";
 import * as XLSX from "xlsx";
+import { useAuth } from "../context/UserContext";
 
 export default function AddDeviceForm({ open, handleCloseAdd, onAddDevice }) {
+    const { user } = useAuth();
+    const token = user.token;
     const [newDevice, setNewDevice] = useState({ deviceName: "", deviceType: "", ipAddress: "", location: "", status: "Active" });
-    
+
     const handleOpenChange = (e) => setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
-    
+
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -20,17 +23,24 @@ export default function AddDeviceForm({ open, handleCloseAdd, onAddDevice }) {
         };
         reader.readAsArrayBuffer(file);
     };
-    
+
     const handleSubmit = async () => {
         try {
-            const response = await fetch("http://localhost:8081/devices", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newDevice) });
+            const response = await fetch("http://localhost:8081/devices/admin", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`, // Send token in Authorization header
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newDevice)
+            });
             if (!response.ok) throw new Error("Failed to add device");
             const addedDevice = await response.json();
             onAddDevice(addedDevice);
             handleCloseAdd();
         } catch (error) { console.error("Error:", error); }
     };
-    
+
     return (
         <Dialog open={open} onClose={handleCloseAdd} sx={{ ".MuiDialog-paper": { borderRadius: 3 } }}>
             <DialogTitle>Add New Device</DialogTitle>
