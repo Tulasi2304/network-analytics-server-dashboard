@@ -4,10 +4,10 @@ import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import DevicesIcon from "@mui/icons-material/Devices";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import BarChartIcon from "@mui/icons-material/BarChart";
-// import LiveHelpIcon from "@mui/icons-material/LiveHelp";
-
+import Cookies from "js-cookie";
+import { useAuth } from "../context/UserContext";
 export default function Home() {
-
+  const {user} = useAuth();
   const [stats, setStats] = useState({
     totalDevices: 0,
     activeDevices: 0,
@@ -15,10 +15,25 @@ export default function Home() {
     analysisResults: 0
   });
 
+  const token = user.token;
   useEffect(() => {
-    // Fetch devices
-    fetch("http://localhost:8081/devices")
-      .then((res) => res.json())
+    // console.log("Token being sent:", token);
+
+    fetch("http://localhost:8081/devices/viewer", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token ? `Bearer ${token}` : "" 
+      }
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+        return res.json();
+      })
       .then((devices) => {
         const totalDevices = devices.length;
         const activeDevices = devices.filter((device) => device.status === "Active").length;
@@ -26,14 +41,20 @@ export default function Home() {
       })
       .catch((err) => console.error("Error fetching devices:", err));
 
-    // Fetch alerts
-    fetch("http://localhost:8081/alerts")
+    fetch("http://localhost:8081/alerts/viewer", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token ? `Bearer ${token}` : "" 
+      }
+    })
       .then((res) => res.json())
       .then((alerts) => {
         setStats((prev) => ({ ...prev, alerts: alerts.length }));
       })
       .catch((err) => console.error("Error fetching alerts:", err));
-  }, []);
+  }, [token]);
 
   return (
     <Box sx={{ flexGrow: 1, p: 3, marginTop: 13 }}>

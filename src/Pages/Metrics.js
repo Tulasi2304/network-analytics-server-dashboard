@@ -14,7 +14,13 @@ export default function Metrics() {
 
     // Fetch metrics from backend
     useEffect(() => {
-        fetch("http://localhost:8081/metrics")
+        fetch("http://localhost:8081/metrics/viewer", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}` // Adjust token storage method
+            }
+          })
             .then((res) => res.json())
             .then((data) => setMetrics(data))
             .catch((err) => console.log(err));

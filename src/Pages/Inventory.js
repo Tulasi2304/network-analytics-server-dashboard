@@ -15,7 +15,7 @@ import EditDeviceForm from "../components/EditDeviceForm";
 export default function Inventory() {
     const [devices, setDevices] = useState([]);
     const [selectedDeviceType, setSelectedDeviceType] = useState("");
-    
+
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
@@ -23,13 +23,29 @@ export default function Inventory() {
 
     const [anchorEl, setAnchorEl] = useState(null);
 
+    const role = localStorage.getItem("role");
+
     // Fetch devices from backend
     useEffect(() => {
-        fetch("http://localhost:8081/devices")
-            .then((res) => res.json())
+        const token = localStorage.getItem("token"); // Retrieve token from local storage
+
+        fetch("http://localhost:8081/devices/viewer", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Send JWT token
+                "Content-Type": "application/json"
+            }
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch devices");
+                }
+                return res.json();
+            })
             .then((data) => setDevices(data))
-            .catch((err) => console.log(err));
+            .catch((err) => console.error("Error fetching devices:", err));
     }, []);
+
 
     //For adding device
     const handleOpenAdd = () => setOpenAdd(true);
@@ -98,9 +114,12 @@ export default function Inventory() {
                     </Menu>
 
                     {/* Add Device Button */}
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
-                        Add Device
-                    </Button>
+                    {role === "ADMIN" && (
+                        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAdd}>
+                            Add Device
+                        </Button>
+                    )}
+
                 </Box>
             </Box>
 
@@ -115,7 +134,10 @@ export default function Inventory() {
                             <TableCell sx={{ fontWeight: "bold" }}>IP Address</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Location</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Actions</TableCell>
+                            {role === "ADMIN" && (
+                                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Actions</TableCell>
+                            )}
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -127,18 +149,20 @@ export default function Inventory() {
                                 <TableCell>{device.ipAddress}</TableCell>
                                 <TableCell>{device.location}</TableCell>
                                 <TableCell>{device.status}</TableCell>
-                                <TableCell align="center">
-                                    <Tooltip title="Edit">
-                                        <IconButton onClick={() => handleOpenEdit(device)}>
-                                            <EditIcon color="primary" />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={() => handleOpenDelete(device)}>
-                                            <DeleteIcon color="error" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </TableCell>
+                                {role === "ADMIN" && (
+                                    <TableCell align="center">
+                                        <Tooltip title="Edit">
+                                            <IconButton onClick={() => handleOpenEdit(device)}>
+                                                <EditIcon color="primary" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Delete">
+                                            <IconButton onClick={() => handleOpenDelete(device)}>
+                                                <DeleteIcon color="error" />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>

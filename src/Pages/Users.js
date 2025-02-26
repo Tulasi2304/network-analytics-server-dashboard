@@ -17,7 +17,7 @@ export default function UsersTable() {
     //         .then((res) => res.json())
     //         .then((data) => setUsers(data))
     //         .catch((err) => console.log(err));
-    // }, []);
+    // }, [u]);
 
     const handleFilterClick = (event) => {
         setAnchorEl(event.currentTarget);

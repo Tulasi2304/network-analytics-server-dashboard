@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -18,15 +18,20 @@ import HomeIcon from "@mui/icons-material/Home";
 import BarChartIcon from '@mui/icons-material/BarChart';
 import InventoryIcon from "@mui/icons-material/Inventory";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TableChartIcon from '@mui/icons-material/TableChart';
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 import Divider from "@mui/material/Divider";
 import GroupIcon from '@mui/icons-material/Group';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import Profile from "./Profile";
+import { useAuth } from "../context/UserContext";
+
 import { Link } from "react-router-dom";
+
+// const role = localStorage.getItem("role");
 
 const drawerWidth = 240;
 
@@ -110,7 +115,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function MiniDrawer() {
     const theme = useTheme();
-
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(true);
     const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
@@ -169,13 +174,6 @@ export default function MiniDrawer() {
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
-                        <ListItemButton component={Link} to="/analysis">
-                            <ListItemIcon><BarChartIcon /></ListItemIcon>
-                            <ListItemText primary="Analysis" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/inventory">
                             <ListItemIcon><InventoryIcon /></ListItemIcon>
                             <ListItemText primary="Device Inventory" />
@@ -183,32 +181,54 @@ export default function MiniDrawer() {
                     </ListItem>
 
                     <ListItem disablePadding sx={{ display: "block" }}>
-                        <ListItemButton component={Link} to="/trends-and-alerts">
-                            <ListItemIcon><TrendingUpIcon /></ListItemIcon>
-                            <ListItemText primary="Trends and Alerts" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <ListItem disablePadding sx={{ display: "block" }}>
                         <ListItemButton component={Link} to="/metrics">
-                            <ListItemIcon><TableChartIcon /></ListItemIcon>
+                            <ListItemIcon><NetworkCheckIcon /></ListItemIcon>
                             <ListItemText primary="Metrics" />
                         </ListItemButton>
                     </ListItem>
 
+                    {user?.role !== "VIEWER" &&
+                        <ListItem disablePadding sx={{ display: "block" }}>
+                            <ListItemButton component={Link} to="/analysis">
+                                <ListItemIcon><BarChartIcon /></ListItemIcon>
+                                <ListItemText primary="Analysis" />
+                            </ListItemButton>
+                        </ListItem>
+                    }
+
+                    {user?.role !== "VIEWER" &&
+                        <ListItem disablePadding sx={{ display: "block" }}>
+                            <ListItemButton component={Link} to="/trends">
+                                <ListItemIcon><TrendingUpIcon /></ListItemIcon>
+                                <ListItemText primary="Trends" />
+                            </ListItemButton>
+                        </ListItem>
+                    }
+
                     <ListItem disablePadding sx={{ display: "block" }}>
-                        <ListItemButton component={Link} to="/users">
-                            <ListItemIcon><GroupIcon /></ListItemIcon>
-                            <ListItemText primary="Users" />
+                        <ListItemButton component={Link} to="/alerts">
+                            <ListItemIcon><NotificationsActiveIcon /></ListItemIcon>
+                            <ListItemText primary="Alerts" />
                         </ListItemButton>
                     </ListItem>
 
-                    <ListItem disablePadding sx={{ display: "block" }}>
-                        <ListItemButton component={Link} to="/add-user">
-                            <ListItemIcon><GroupAddIcon /></ListItemIcon>
-                            <ListItemText primary="Add users" />
-                        </ListItemButton>
-                    </ListItem>
+                    {user?.role === "ADMIN" &&
+                        <ListItem disablePadding sx={{ display: "block" }}>
+                            <ListItemButton component={Link} to="/users">
+                                <ListItemIcon><GroupIcon /></ListItemIcon>
+                                <ListItemText primary="Users" />
+                            </ListItemButton>
+                        </ListItem>
+                    }
+
+                    {user?.role === "ADMIN" &&
+                        <ListItem disablePadding sx={{ display: "block" }}>
+                            <ListItemButton component={Link} to="/add-user">
+                                <ListItemIcon><GroupAddIcon /></ListItemIcon>
+                                <ListItemText primary="Add users" />
+                            </ListItemButton>
+                        </ListItem>
+                    }
                 </List>
             </Drawer>
         </Box>

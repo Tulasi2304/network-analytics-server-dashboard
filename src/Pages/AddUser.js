@@ -9,23 +9,36 @@ export default function AddUser() {
     
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
     
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
-            if (json.length > 0) setFormData(json[0]);
-        };
-        reader.readAsArrayBuffer(file);
+    
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        try {
+            const response = await fetch("http://localhost:8081/users/upload", {
+                method: "POST",
+                body: formData
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to upload file");
+            }
+    
+            const result = await response.json();
+            console.log("File uploaded successfully: ", result);
+            alert("File uploaded successfully!");
+    
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
     };
+    
     
     const handleRegister = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/users", {
+            const response = await fetch("http://localhost:8081/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -35,9 +48,10 @@ export default function AddUser() {
             if (!response.ok) {
                 throw new Error("Failed to register user");
             }
+            // console.log(response)
             const result = await response.json();
             console.log("User Registered: ", result);
-            navigate("/home");
+            navigate("/add-user");
         } catch (error) {
             console.error("Error registering user:", error);
         }
