@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Card, CardContent, Grid, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import DevicesIcon from "@mui/icons-material/Devices";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import BarChartIcon from "@mui/icons-material/BarChart";
 
 import { useAuth } from "../context/UserContext";
 
@@ -118,7 +117,7 @@ export default function Home() {
             <CardContent>
               <NotificationsActiveIcon color="error" fontSize="large" />
               <Typography variant="h5">{stats.alerts}</Typography>
-              <Typography variant="body2">Critical Alerts</Typography>
+              <Typography variant="body2">Alerts</Typography>
             </CardContent>
           </Card>
         </Grid>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Box, TextField, Button, Typography, Container, Card, CardContent, Alert,} from "@mui/material";
+import { Box, TextField, Button, Typography, Container, Card, CardContent, Alert, } from "@mui/material";
 import { useAuth } from "../context/UserContext";
 
 export default function ChangePassword() {
@@ -11,21 +11,21 @@ export default function ChangePassword() {
     const [success, setSuccess] = useState("");
     const navigate = useNavigate();
 
-    const {user} = useAuth();
+    const { user } = useAuth();
     const username = user.username;
-    
+
     const token = user.token;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setError("");
-        setSuccess("");
-    
+        // setError("");
+        // setSuccess("");
+
         if (!oldPassword || !newPassword || !confirmPassword) {
             setError("All fields are required.");
             return;
         }
-    
+
         if (newPassword !== confirmPassword) {
             setError("New password and confirm password do not match.");
             return;
@@ -40,29 +40,29 @@ export default function ChangePassword() {
             },
             body: JSON.stringify({ username, newPassword }),
         })
-        .then((res) => res.json())
-        .then((data) => {
-            if (data.success) {
-                setSuccess("Password changed successfully!");
-                
-                // setTimeout(() => {
-                //     navigate("/home");
-                // }, 1500);
-                
-                setOldPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
-                navigate("/home");
-            } else {
-                setError(data.message || "Error changing password.");
-            }
-            setTimeout(() => {
-                navigate("/home");
-            }, 1500);
-        })
-        .catch(() => setError("Server error. Please try again later."));
+            .then((res) => res.json())
+            .then((data) => {
+
+                if (data.message === "Password updated successfully") {
+                    setSuccess("Password changed successfully!");
+                    setError("");
+                    setOldPassword("");
+                    setNewPassword("");
+                    setConfirmPassword("");
+
+                    setTimeout(() => {
+                        navigate("/home");
+                    }, 1500);
+                } else {
+                    setError(data.message || "Error changing password.");
+                }
+                setTimeout(() => {
+                    // navigate("/home");
+                }, 1500);
+            })
+            .catch(() => setError("Server error. Please try again later."));
     };
-    
+
 
     return (
         <Container maxWidth="sm">
@@ -74,12 +74,13 @@ export default function ChangePassword() {
                         </Typography>
 
                         {error && <Alert severity="error">{error}</Alert>}
-                        {success && <Alert severity="success">{success}</Alert>}
+                        {success && <Alert severity="success" color="success">{success}</Alert>}
+
 
                         <form onSubmit={handleSubmit}>
-                            <TextField fullWidth label="Old Password" type="password" margin="normal" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required/>
-                            <TextField fullWidth label="New Password" type="password" margin="normal" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required/>
-                            <TextField fullWidth label="Confirm New Password" type="password" margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/>
+                            <TextField fullWidth label="Old Password" type="password" margin="normal" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required />
+                            <TextField fullWidth label="New Password" type="password" margin="normal" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                            <TextField fullWidth label="Confirm New Password" type="password" margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
 
                             <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                                 Change Password
