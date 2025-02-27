@@ -110,9 +110,11 @@ export default function Analysis() {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: 2, m: 5, width: "100%" }}>
+                    {user?.roles[0] === "ADMIN" &&
                         <Button variant="contained" color="primary" onClick={handleGenerateAndDownload} disabled={isProcessing}>
                             {isProcessing ? "Processing..." : "Generate & Download Report"}
                         </Button>
+                    }
                         <Card sx={{ px: 5, py: 2 }}>
                             <CardContent>
                                 <Typography gutterBottom variant="body1" sx={{ my: 2 }}>
