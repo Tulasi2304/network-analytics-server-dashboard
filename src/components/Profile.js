@@ -8,7 +8,7 @@ export default function Profile({ anchorEl, handleClose }) {
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
     const { user, logout } = useAuth(); // Get user from context
-    console.log("User Data:", user);
+    // console.log("User Data:", user);
 
 
     const handleLogout = () => {

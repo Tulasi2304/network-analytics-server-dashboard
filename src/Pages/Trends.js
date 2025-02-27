@@ -1,83 +1,173 @@
-import React, { useState, useEffect } from "react";
-import {
-    Box, Typography, Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Paper, IconButton, Menu, MenuItem
-} from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import LiveGraph from "../components/LiveGraph";
 import { useAuth } from "../context/UserContext";
 
 export default function Trends() {
-    const [devices, setDevices] = useState([]);
-    const [analysis, setAnalysis] = useState([]);
-    const [selectedDevice, setSelectedDevice] = useState("");
-    const [anchorEl, setAnchorEl] = useState(null);
-
     const { user } = useAuth();
     const token = user.token;
+
+    const [devices, setDevices] = useState([]);
+    const [selectedDeviceType, setSelectedDeviceType] = useState("");
+    const [metrics, setMetrics] = useState([]);
 
     useEffect(() => {
         fetch("http://localhost:8081/devices/viewer", {
             method: "GET",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": token ? `Bearer ${token}` : ""
+            }
         })
-        .then(res => res.json())
-        .then(setDevices)
-        .catch(err => console.error("Error fetching devices:", err));
-
-        fetch("http://localhost:8081/analysis/analyst", {
-            method: "GET",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
-        })
-        .then(res => res.json())
-        .then(setAnalysis)
-        .catch(err => console.error("Error fetching analysis:", err));
+            .then(async (res) => {
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${errorText}`);
+                }
+                return res.json();
+            })
+            .then(setDevices)
+            .catch((err) => console.error("Error fetching devices:", err));
     }, []);
 
-    const handleFilterClick = (event) => setAnchorEl(event.currentTarget);
-    const handleFilterClose = (deviceId) => {
-        setSelectedDevice(deviceId);
-        setAnchorEl(null);
+    useEffect(() => {
+        if (!selectedDeviceType) return;
+
+        let isMounted = true;
+
+        const fetchMetrics = async () => {
+            try {
+                const response = await fetch("http://localhost:8081/metrics/viewer/stream", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (isMounted) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const rawData = decoder.decode(value);
+                    console.log("Raw Stream Data:", rawData);
+
+                    try {
+                        const newMetric = JSON.parse(rawData);
+                        console.log("Parsed Metric Data:", newMetric);
+
+                        if (isMounted) {
+                            setMetrics((prevMetrics) => {
+                                const updatedMetrics = [...prevMetrics, newMetric].slice(-30);
+                                return updatedMetrics;
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching metrics:", error);
+            }
+        };
+
+        fetchMetrics();
+        return () => { isMounted = false; };
+    }, [selectedDeviceType, token]);
+
+    const handleDeviceTypeChange = (event) => {
+        setSelectedDeviceType(event.target.value);
+        setMetrics([]); // Reset metrics on change
     };
 
-    const filteredAnalysis = analysis.filter(a => !selectedDevice || a.device.id === selectedDevice);
-    const analysisHeaders = analysis.length > 0 ? Object.keys(analysis[0]) : [];
+    const deviceTypes = [...new Set(devices?.map(device => device.deviceType))];
+
+    // Filter metrics by selected device type
+    const filteredMetrics = metrics.filter(m => m.device.deviceType === selectedDeviceType);
+
+    // Group metrics by metric type
+    const metricOrder = {
+        ROUTER: ["Bandwidth", "Latency", "Packet Loss"],
+        SWITCH: ["Port Utilization", "Throughput", "Error Rate"],
+        FIREWALL: ["Blocked Requests", "Intrusion Attempts", "CPU Load"],
+        SERVER: ["CPU Usage", "Memory Utilization", "Disk Utilization"]
+    };
+
+    // Get the predefined order for the selected device type, defaulting to an empty array
+    const selectedMetricOrder = metricOrder[selectedDeviceType] || [];
+
+    // Group metrics in an object
+    const groupedMetrics = filteredMetrics.reduce((acc, metric) => {
+        const { metricType, value, timestamp } = metric;
+        const formattedTimestamp = new Date(timestamp).toLocaleTimeString();
+
+        if (!acc[metricType]) acc[metricType] = { timestamps: [], values: [] };
+        acc[metricType].timestamps.push(formattedTimestamp);
+        acc[metricType].values.push(value);
+
+        return acc;
+    }, {});
+
+    // Sort metrics based on predefined order
+    const sortedGroupedMetrics = Object.fromEntries(
+        selectedMetricOrder
+            .filter(metricType => groupedMetrics[metricType]) // Ensure only present metrics are included
+            .map(metricType => [metricType, groupedMetrics[metricType]])
+    );
+
+
+    console.log(groupedMetrics)
 
     return (
-        <Box sx={{ marginTop: 8, padding: 4, width: "100%", mx: 5 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h6" fontWeight="bold">Analysis Results</Typography>
-                <IconButton onClick={handleFilterClick}> <FilterListIcon /> </IconButton>
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleFilterClose("")}>
-                    <MenuItem onClick={() => handleFilterClose("")}>All</MenuItem>
-                    {devices.map(device => (
-                        <MenuItem key={device.id} onClick={() => handleFilterClose(device.id)}>
-                            {device.deviceName}
-                        </MenuItem>
+        <Box sx={{ marginTop: 8 }}>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2, m: 5 }}>
+                        <Card sx={{ px: 5, py: 2 }}>
+                            <CardContent>
+                                <Typography gutterBottom variant="body1" sx={{ my: 2 }}>
+                                    Select a Device Type:
+                                </Typography>
+                                <FormControl sx={{ minWidth: 200 }}>
+                                    <InputLabel>Device Type</InputLabel>
+                                    <Select value={selectedDeviceType} onChange={handleDeviceTypeChange} label="Device Type">
+                                        <MenuItem value="">-- Select a Device Type --</MenuItem>
+                                        {deviceTypes.map((type) => (
+                                            <MenuItem key={type} value={type}>{type}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </CardContent>
+                        </Card>
+                    </Box>
+                </Grid>
+            </Grid>
+
+            {selectedDeviceType && (
+                <Grid container spacing={2} sx={{ p: 2 }}>
+                    {Object.keys(sortedGroupedMetrics).map(metricType => (
+                        <Grid item xs={12} md={6} lg={6} key={metricType}>
+                            <Card sx={{ width: "550px", display: "flex", flexDirection: "column" }}>
+                                <CardContent>
+                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
+                                        {metricType}
+                                    </Typography>
+                                    <LiveGraph label={metricType} values={sortedGroupedMetrics[metricType].values} />
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
-                </Menu>
-            </Box>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
-                            {analysisHeaders.map(header => (
-                                <TableCell key={header} sx={{ fontWeight: "bold" }}>{header}</TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredAnalysis.map((result, index) => (
-                            <TableRow key={result.id} sx={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}>
-                                {analysisHeaders.map(header => (
-                                    <TableCell key={header}>
-                                        {typeof result[header] === "object" ? result[header]?.id : result[header]}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+
+                </Grid>
+            )}
         </Box>
     );
 }
